@@ -1,0 +1,8 @@
+prefix=/home/fieldro/Dev/ZL_B00/devel
+
+Name: ZL_B00
+Description: Description of ZL_B00
+Version: 0.0.1
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: roscpp can_msgs

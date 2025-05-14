@@ -1,0 +1,2 @@
+ZL_B
+-DCATKIN_DEVEL_PREFIX=/home/fieldro/Dev/ZL_B00/devel -DCMAKE_INSTALL_PREFIX=/home/fieldro/Dev/ZL_B00/install -G Unix Makefiles
