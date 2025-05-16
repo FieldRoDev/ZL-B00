@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <cstdint>
 #include <cfloat>
@@ -13,6 +15,12 @@
 inline int32_t rpm_to_internal_velocity(int32_t rpm)
 {
   return static_cast<int32_t>((static_cast<int64_t>(rpm) * SCALE_FACTOR * RESOLUTION) / FACTOR);
+}
+
+inline int32_t internal_velocity_to_rpm(int32_t internal_velocity)
+{
+  return static_cast<int32_t>(
+      (static_cast<int64_t>(internal_velocity) * FACTOR) / (SCALE_FACTOR * RESOLUTION));
 }
 
 inline double position_to_radian(const int32_t position)

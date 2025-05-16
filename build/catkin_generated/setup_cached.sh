@@ -7,6 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export LD_LIBRARY_PATH='/home/fieldro/Dev/zlb_drive/devel/lib:/home/fieldro/Dev/rmd/devel/lib:/home/fieldro/Dev/imu/devel/lib:/home/fieldro/ros_ws/devel/lib:/opt/ros/melodic/lib'
-export PKG_CONFIG_PATH='/home/fieldro/Dev/zlb_drive/devel/lib/pkgconfig:/home/fieldro/Dev/rmd/devel/lib/pkgconfig:/home/fieldro/Dev/imu/devel/lib/pkgconfig:/home/fieldro/ros_ws/devel/lib/pkgconfig:/opt/ros/melodic/lib/pkgconfig'
+export CMAKE_PREFIX_PATH="/home/fieldro/Dev/ZL_B00/devel:$CMAKE_PREFIX_PATH"
 export PWD='/home/fieldro/Dev/ZL_B00/build'
+export ROSLISP_PACKAGE_DIRECTORIES="/home/fieldro/Dev/ZL_B00/devel/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/fieldro/Dev/ZL_B00/src:$ROS_PACKAGE_PATH"

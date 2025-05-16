@@ -7,15 +7,27 @@ project(ZL_B00 VERSION 0.1.0 LANGUAGES CXX)
 set(NODE_NAME "ZL_B")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE  Debug)
 
 find_package(yaml-cpp REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   can_msgs
+  message_generation
+)
+
+add_message_files(
+  FILES
+  pdo_tx_msgs.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
 )
 
 catkin_package(
-  CATKIN_DEPENDS roscpp can_msgs
+  CATKIN_DEPENDS roscpp can_msgs std_msgs message_runtime
 )
 
 include_directories(
@@ -25,7 +37,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include/driver
 )
 
-add_executable(main
+add_executable(ZL_B00_node
   src/main.cpp
   src/driver/ZL_B.cpp
   src/driver/ZL_B_traction.cpp
@@ -35,7 +47,7 @@ add_executable(main
   src/.global/logger.cpp
 )
 
-target_link_libraries(main
+target_link_libraries(ZL_B00_node
   ${catkin_LIBRARIES}
   yaml-cpp
 )

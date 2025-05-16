@@ -3,6 +3,6 @@ prefix=/home/fieldro/Dev/ZL_B00/install
 Name: ZL_B00
 Description: Description of ZL_B00
 Version: 0.0.1
-Cflags: 
+Cflags: -I${prefix}/include
 Libs: -L${prefix}/lib 
-Requires: roscpp can_msgs
+Requires: roscpp can_msgs std_msgs message_runtime

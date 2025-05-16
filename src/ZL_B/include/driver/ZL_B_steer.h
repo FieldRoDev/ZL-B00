@@ -22,9 +22,15 @@ public:
   void move_to_origin();
   void set_position_mode();
   void set_position(int32_t position);
+  void set_degree(double degree);
+  void set_radian(double radian);
   void set_position_speed(int32_t rpm);
   void run_incremental_position();
   void run_absolute_position();
+  void get_position();
+  void get_radian();
+  void get_degree();
+  void get_velocity();
 
 protected:
   void set_din();

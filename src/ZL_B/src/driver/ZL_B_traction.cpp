@@ -16,6 +16,7 @@ ZL_B_traction::~ZL_B_traction()
 void ZL_B_traction::traction_init()
 {
   stop();
+  set_din();
   set_velocity_mode();
 }
 
@@ -48,6 +49,16 @@ void ZL_B_traction::set_velocity(int32_t rpm)
 void ZL_B_traction::run_velocity()
 {
   _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::START);
+}
+
+void ZL_B_traction::get_position()
+{
+  _traction_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::POSITION_FEEDBACK_INDEX, 0x00, 0x00);
+}
+
+void ZL_B_traction::get_velocity()
+{
+  _traction_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::VELOCITY_FEEDBACK_INDEX, 0x00, 0x00);
 }
 
 void ZL_B_traction::set_din()

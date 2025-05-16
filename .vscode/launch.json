@@ -1,7 +1,44 @@
 {
-    // IntelliSense를 사용하여 가능한 특성에 대해 알아보세요.
-    // 기존 특성에 대한 설명을 보려면 가리킵니다.
-    // 자세한 내용을 보려면 https://go.microsoft.com/fwlink/?linkid=830387을(를) 방문하세요.
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "ROS: Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/devel/lib/ZL_B00/${input:nodeName}",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "ROS_MASTER_URI",
+                    "value": "http://fieldro-QM9700-QM9600-6C:11311/"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "catkin_make: build"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "packageName",
+            "type": "promptString",
+            "description": "Enter the name of the ROS package",
+            "default": "zlb"
+        },
+        {
+            "id": "nodeName",
+            "type": "promptString",
+            "description": "Enter the name of the node to debug",
+            "default": "ZL_B00_node"
+        }
+    ]
 }

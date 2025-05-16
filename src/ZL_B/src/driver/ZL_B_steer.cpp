@@ -53,10 +53,20 @@ void ZL_B_steer::set_position(int32_t position)
   _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_COMMAND_INDEX, 0x00, position);
 }
 
+void ZL_B_steer::set_degree(double degree)
+{
+  set_position(degree_to_position(degree));
+}
+
+void ZL_B_steer::set_radian(double radian)
+{
+  set_position(radian_to_position(radian));
+}
+
 void ZL_B_steer::set_position_speed(int32_t rpm)
 {
   int32_t internal_speed = rpm_to_internal_velocity(rpm);
-  _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, rpm);
+  _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
 }
 
 void ZL_B_steer::run_absolute_position()
@@ -69,6 +79,16 @@ void ZL_B_steer::run_incremental_position()
 {
   _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET1);
   _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET2);
+}
+
+void ZL_B_steer::get_position()
+{
+  _steer_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::POSITION_FEEDBACK_INDEX, 0x00, 0x00);
+}
+
+void ZL_B_steer::get_velocity()
+{
+  _steer_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::VELOCITY_FEEDBACK_INDEX, 0x00, 0x00);
 }
 
 void ZL_B_steer::set_din()

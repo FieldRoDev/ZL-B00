@@ -14,6 +14,8 @@ public:
   void set_velocity_mode();
   void set_velocity(int32_t rpm);
   void run_velocity();
+  void get_position();
+  void get_velocity();
 
 
 protected:

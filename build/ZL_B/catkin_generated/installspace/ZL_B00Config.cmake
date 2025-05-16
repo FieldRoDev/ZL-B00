@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(ZL_B00_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT " " STREQUAL " ")
+if(NOT "include " STREQUAL " ")
   set(ZL_B00_INCLUDE_DIRS "")
-  set(_include_dirs "")
+  set(_include_dirs "include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/fieldro/Dev/ZL_B00/install/lib;/home/fieldro/Dev/ZL_B00/devel/lib;/home/fieldro/Dev/zlb_drive/devel/lib;/home/fieldro/Dev/rmd/devel/lib;/home/fieldro/Dev/imu/devel/lib;/home/fieldro/ros_ws/devel/lib;/opt/ros/melodic/lib)
+    foreach(path /home/fieldro/Dev/ZL_B00/install/lib;/home/fieldro/Dev/zlb_drive/devel/lib;/home/fieldro/Dev/rmd/devel/lib;/home/fieldro/Dev/imu/devel/lib;/home/fieldro/ros_ws/devel/lib;/opt/ros/melodic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -177,7 +177,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(ZL_B00_EXPORTED_TARGETS "")
+set(ZL_B00_EXPORTED_TARGETS "ZL_B00_generate_messages_cpp;ZL_B00_generate_messages_eus;ZL_B00_generate_messages_lisp;ZL_B00_generate_messages_nodejs;ZL_B00_generate_messages_py")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${ZL_B00_EXPORTED_TARGETS})
   if(NOT TARGET ${t})
@@ -185,7 +185,7 @@ foreach(t ${ZL_B00_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "roscpp;can_msgs")
+set(depends "roscpp;can_msgs;std_msgs;message_runtime")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls
@@ -214,7 +214,7 @@ foreach(depend ${depends})
   list(APPEND ZL_B00_EXPORTED_TARGETS ${${ZL_B00_dep}_EXPORTED_TARGETS})
 endforeach()
 
-set(pkg_cfg_extras "")
+set(pkg_cfg_extras "ZL_B00-msg-extras.cmake")
 foreach(extra ${pkg_cfg_extras})
   if(NOT IS_ABSOLUTE ${extra})
     set(extra ${ZL_B00_DIR}/${extra})

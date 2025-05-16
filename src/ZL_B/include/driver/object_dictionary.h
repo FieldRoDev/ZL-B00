@@ -7,7 +7,8 @@ enum COMMAND_WORD
 {
   SINGLE_DATA = 0x2F,
   DOUBLE_DATA = 0x2B,
-  QUAD_DATA = 0x23
+  QUAD_DATA = 0x23,
+  READ_DATA = 0x40
 };
 
 namespace CANOPEN_OD 
@@ -28,7 +29,7 @@ namespace CANOPEN_OD
         constexpr int HOMING_SET2                 = 0x1F;
     }
 
-    // Operation Mode 레지스터
+    // Operation Mode 인덱스
     constexpr int OPMODE_INDEX = 0x6060;
     namespace OPMODE_VALUE 
     {
@@ -119,7 +120,7 @@ namespace CANOPEN_OD
         constexpr int NONE     = 0x00;
     }  // namespace LIMIT_MODE_VALUE
 
-    // Velocity 레지스터
+    // Velocity 인덱스
     constexpr int VELOCITY_DIRECTION_INDEX = 0x607E;
     const std::unordered_map<std::string, int> VELOCITY_DIRECTION_VALUES = {
         {"forward", 0},
@@ -130,12 +131,12 @@ namespace CANOPEN_OD
     constexpr int VELOCITY_FEEDBACK_INDEX = 0x606C; // actual speed (Data type: int32_t)
     constexpr int MAX_VELOCITY_INDEX      = 0x6080; // max velocity limit (Data type: uint16_t)
 
-    // Position 레지스터
+    // Position 인덱스
     constexpr int POSITION_COMMAND_INDEX       = 0x607A; // target position (Data type: int32_t)
     constexpr int POSITION_SPEED_COMMAND_INDEX = 0x6081; // velocity (Data type: uint32_t)
-    constexpr int POSITION_FEEDBACK_INDEX      = 0x6063; // actual position (Data type: int32_t)
+    constexpr int POSITION_FEEDBACK_INDEX      = 0x6064; // actual position (Data type: int32_t)
 
-    // Profile Acceleration, Deceleration 레지스터 (Data type : uint32_t)
+    // Profile Acceleration, Deceleration 인덱스 (Data type : uint32_t)
     constexpr int PROFILE_ACCELERATION_INDEX = 0x6083; // default: 100rps/s
     constexpr int PROFILE_DECELERATION_INDEX = 0x6084; // default: 100rps/s
 }

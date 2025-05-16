@@ -1,0 +1,10 @@
+(cl:in-package ZL_B00-msg)
+(cl:export '(TRACTION_POSITION-VAL
+          TRACTION_POSITION
+          TRACTION_VELOCITY-VAL
+          TRACTION_VELOCITY
+          STEER_POSITION-VAL
+          STEER_POSITION
+          STEER_VELOCITY-VAL
+          STEER_VELOCITY
+))
