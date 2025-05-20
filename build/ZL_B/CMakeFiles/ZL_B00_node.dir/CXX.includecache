@@ -131,10 +131,6 @@ global_helper.h
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/global_helper.h
 
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/ZL_B_steer.h
-iostream
--
-ros/ros.h
-/home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/ros/ros.h
 canopen.h
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/canopen.h
 yaml-cpp/yaml.h
@@ -145,6 +141,8 @@ logger.h
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/ZL_B_traction.h
 canopen.h
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/canopen.h
+logger.h
+/home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/logger.h
 
 /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/data_converter.h
 vector

@@ -41,21 +41,70 @@ void ZL_B_traction::reset()
   _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::RESET);
 }
 
+void ZL_B_traction::set_position_mode()
+{
+  stop();
+  _opmode = "POSITION";
+  _traction_callback_function(COMMAND_WORD::SINGLE_DATA, CANOPEN_OD::OPMODE_INDEX, 0x00, CANOPEN_OD::OPMODE_VALUE::POSITION);
+}
+
 void ZL_B_traction::set_velocity_mode()
 {
+  stop();
+  _opmode = "VELOCITY";
   _traction_callback_function(COMMAND_WORD::SINGLE_DATA, CANOPEN_OD::OPMODE_INDEX, 0x00, CANOPEN_OD::OPMODE_VALUE::VELOCITY);
+}
+
+void ZL_B_traction::set_position(int32_t position)
+{
+  _set_position = position;
+  _traction_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_COMMAND_INDEX, 0x00, position);
 }
 
 void ZL_B_traction::set_velocity(int32_t rpm)
 {
   _set_velocity          = rpm;
   int32_t internal_speed = rpm_to_internal_velocity(rpm);
-  _traction_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::VELOCITY_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  if(_opmode == "VELOCITY")
+  {
+    _traction_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::VELOCITY_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  }
+  else if(_opmode == "POSITION")
+  {
+    _traction_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  }
 }
 
 void ZL_B_traction::run_velocity()
 {
+  if(_opmode != "VELOCITY")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET VELOCITY MODE FIRST", "");
+    return;
+  }
   _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::START);
+}
+
+void ZL_B_traction::run_incremental_position()
+{
+  if(_opmode != "POSITION")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET POSITION MODE FIRST", "");
+    return;
+  }
+  _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET1);
+  _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET2);
+}
+
+void ZL_B_traction::run_absolute_position()
+{
+  if(_opmode != "POSITION")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET POSITION MODE FIRST", "");
+    return;
+  }
+  _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET1);
+  _traction_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET2);
 }
 
 void ZL_B_traction::set_din()

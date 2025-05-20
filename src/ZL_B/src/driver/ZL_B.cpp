@@ -32,27 +32,39 @@ void ZL_B::control(std::string str)
   else if(cmd == "traction")
   {
     if(_command_map.find("stop") != _command_map.end())               _traction->stop();
+    else if(_command_map.find("posmode") != _command_map.end())       _traction->set_position_mode();
     else if(_command_map.find("velmode") != _command_map.end())       _traction->set_velocity_mode();
-    else if(_command_map.find("set") != _command_map.end())           _traction->set_velocity(static_cast<int32_t>(_command_map["rpm"]));
-    else if(_command_map.find("run") != _command_map.end())           _traction->run_velocity();
+    else if(_command_map.find("set") != _command_map.end())
+    {
+      if(_command_map.find("rpm") != _command_map.end())              _traction->set_velocity(static_cast<int32_t>(_command_map["rpm"]));
+      if(_command_map.find("pos") != _command_map.end())              _traction->set_position(static_cast<int32_t>(_command_map["pos"]));
+    }
+    else if(_command_map.find("run") != _command_map.end())
+    {
+      if(_command_map.find("vel") != _command_map.end())              _traction->run_velocity();
+      else if(_command_map.find("abs") != _command_map.end())         _traction->run_absolute_position();
+      else if(_command_map.find("inc") != _command_map.end())         _traction->run_incremental_position();
+    }
   }
 
   else if(cmd=="steer")
   {
     if(_command_map.find("stop") != _command_map.end())               _steer->stop();
     else if(_command_map.find("posmode") != _command_map.end())       _steer->set_position_mode();
+    else if(_command_map.find("velmode") != _command_map.end())       _steer->set_velocity_mode();
     else if(_command_map.find("origin") != _command_map.end())        _steer->move_to_origin();
     else if(_command_map.find("set") != _command_map.end())
     {
-      if(_command_map.find("rpm") != _command_map.end())                _steer->set_position_speed(static_cast<int32_t>(_command_map["rpm"]));
-      if(_command_map.find("pos") != _command_map.end())                _steer->set_position(static_cast<int32_t>(_command_map["pos"]));
-      else if(_command_map.find("deg") != _command_map.end())           _steer->set_degree(_command_map["deg"]);
-      else if(_command_map.find("rad") != _command_map.end())           _steer->set_radian(_command_map["rad"]);
+      if(_command_map.find("rpm") != _command_map.end())              _steer->set_velocity(static_cast<int32_t>(_command_map["rpm"]));
+      if(_command_map.find("pos") != _command_map.end())              _steer->set_position(static_cast<int32_t>(_command_map["pos"]));
+      else if(_command_map.find("deg") != _command_map.end())         _steer->set_degree(_command_map["deg"]);
+      else if(_command_map.find("rad") != _command_map.end())         _steer->set_radian(_command_map["rad"]);
     }
     else if(_command_map.find("run") != _command_map.end())
     {
-      if(_command_map.find("abs") != _command_map.end())                _steer->run_absolute_position();
-      else if(_command_map.find("inc") != _command_map.end())           _steer->run_incremental_position();
+      if(_command_map.find("vel") != _command_map.end())              _steer->run_velocity();
+      else if(_command_map.find("abs") != _command_map.end())         _steer->run_absolute_position();
+      else if(_command_map.find("inc") != _command_map.end())         _steer->run_incremental_position();
     }
   }
 }

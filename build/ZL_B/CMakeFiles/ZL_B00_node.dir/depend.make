@@ -215,6 +215,7 @@ ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_steer.cpp.o: /opt/ros/melodic/in
 
 ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/devel/include/ZL_B00/pdo_tx_msgs.h
 ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/src/ZL_B/include/.global/global_helper.h
+ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/src/ZL_B/include/.global/logger.h
 ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/src/ZL_B/include/.global/safe_queue.h
 ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/src/ZL_B/include/canopen/canopen.h
 ZL_B/CMakeFiles/ZL_B00_node.dir/src/driver/ZL_B_traction.cpp.o: /home/fieldro/Dev/ZL_B00/src/ZL_B/include/driver/ZL_B_traction.h

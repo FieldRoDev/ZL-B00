@@ -44,14 +44,24 @@ void ZL_B_steer::reset()
 
 void ZL_B_steer::move_to_origin()
 {
+  set_position_mode();
   set_position(_origin_position);
-  set_position_speed(_origin_speed);
+  set_velocity(_origin_speed);
   run_absolute_position();
 }
 
 void ZL_B_steer::set_position_mode()
 {
+  stop();
+  _opmode = "POSITION";
   _steer_callback_function(COMMAND_WORD::SINGLE_DATA, CANOPEN_OD::OPMODE_INDEX, 0x00, CANOPEN_OD::OPMODE_VALUE::POSITION);
+}
+
+void ZL_B_steer::set_velocity_mode()
+{
+  stop();
+  _opmode = "VELOCITY";
+  _steer_callback_function(COMMAND_WORD::SINGLE_DATA, CANOPEN_OD::OPMODE_INDEX, 0x00, CANOPEN_OD::OPMODE_VALUE::VELOCITY);
 }
 
 void ZL_B_steer::set_position(int32_t position)
@@ -60,25 +70,47 @@ void ZL_B_steer::set_position(int32_t position)
   _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_COMMAND_INDEX, 0x00, position);
 }
 
+void ZL_B_steer::set_velocity(int32_t rpm)
+{
+  _set_velocity          = rpm;
+  int32_t internal_speed = rpm_to_internal_velocity(rpm);
+  if(_opmode == "VELOCITY")
+  {
+    _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::VELOCITY_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  }
+  else if(_opmode == "POSITION")
+  {
+    _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  }
+}
+
 void ZL_B_steer::set_degree(double degree)
 {
-  set_position(degree_to_position(degree));
+  set_position(degree_to_position(degree) + _origin_position);
 }
 
 void ZL_B_steer::set_radian(double radian)
 {
-  set_position(radian_to_position(radian));
+  set_position(radian_to_position(radian) + _origin_position);
 }
 
-void ZL_B_steer::set_position_speed(int32_t rpm)
+void ZL_B_steer::run_velocity()
 {
-  _set_velocity          = rpm;
-  int32_t internal_speed = rpm_to_internal_velocity(rpm);
-  _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
+  if(_opmode != "VELOCITY")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET VELOCITY MODE FIRST", "");
+    return;
+  }
+  _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::START);
 }
 
 void ZL_B_steer::run_absolute_position()
 {
+  if(_opmode != "POSITION")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET POSITION MODE FIRST", "");
+    return;
+  }
   if(_positive_limit < _set_position)
   {
     LOGGER->push_log_format("ERROR", "PROC", "Positive limit over.", "positive limit : " + std::to_string(_positive_limit));
@@ -98,6 +130,11 @@ void ZL_B_steer::run_absolute_position()
 
 void ZL_B_steer::run_incremental_position()
 {
+  if(_opmode != "POSITION")
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "SET POSITION MODE FIRST", "");
+    return;
+  }
   if(_positive_limit < (_current_position + _set_position))
   {
     LOGGER->push_log_format("ERROR", "PROC", "Positive limit over.", "positive limit : " + std::to_string(_positive_limit));

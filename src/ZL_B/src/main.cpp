@@ -13,9 +13,9 @@ int main(int argc, char** argv)
 
   while(loop)
   {
-     if(!check_std_in(10000)) continue;
+    if(!check_std_in(10000)) continue;
 
-    std::string str = get_user_input();
+    std::string              str   = get_user_input();
     std::vector<std::string> input = find_command_target(str, ' ');
 
     if(input.size() < 1) continue;

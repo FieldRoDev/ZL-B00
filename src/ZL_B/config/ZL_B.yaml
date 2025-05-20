@@ -2,6 +2,6 @@ config_name: ZL_B_CONFIG
 
 steer:
   origin: -196149 # mechanical origin
-  origin_speed: 300 # motor rpm
+  origin_speed: 2500 # motor rpm
   positive_limit: 3920327 # positive_sensor_limit - 10000(homing mode default offset value)
   negative_limit: -4332625 # negative_sensor_limit + 10000(homing mode default offset value)
