@@ -1,79 +1,32 @@
-ZL_B00 CANopen Motor Control System
-
-1. 개요
-
-BLV 명종 모터를 ROS 바탕에서 CANopen 토픽까지 연결하여 위치/속도 및 조건 저지 가능한 키워드 인터페이스 구현
-
-작업자 컨설러 메시지 입/출력을 통해 모터 지정 가능
-
-2. 시스템 구조
-
-2.1 함수
-
-main.cpp : 초기화하고 사용자 입력을 받아 모든 명령을 통지
-
-ZL_B.cpp : 다중 모터 구조(traction, steer) 등의 관리 기능 구현
-
-ZL_B_traction, ZL_B_steer : CANopen 로 전력 및 속도/위치 명령 전발
-
-canopen.cpp : can0 및 pdo 토픽에 대해 pub/sub 구현
-
-2.2 통신 구조
-
-최소 can0 전역을 통해 BLV 모터와 연결
-
-/can0/rx 수신 구도에서 pdo_tx_msgs로 다시 그룹하여 /pdo/tx 토픽에 pub
-
-3. ROS 토픽 정의
-
-/can0/rx : CAN 수신 frame
-
-/can0/tx : CAN 보낸 frame (SDO, NMT)
-
-/pdo/tx : DLC == 4인 PDO 바이트를 id + data로 그룹한 상품 토픽
-
-4. 명령어 포맷 (main loop)
-
-명령
-
-목적
-
-zlb stop
-
-명령으로 모든 모터 stop 명령 전발
-
-zlb reset
-
-모든 모터 reset SDO 명령 전발
-
-zlb traction velmode
-
-traction motor를 속도 명령 방식으로 설정
-
-zlb traction set rpm:100
-
-traction motor에 진정적인 속도를 set
-
-zlb traction run
-
-set한 속도로 run 명령 전발
-
-zlb steer posmode
-
-steering 모드의 position mode 설정
-
-zlb steer set rpm:200 pos:1000
-
-position speed 및 absolute position 설정
-
-zlb steer run abs
-
-absolute position로 run
-
-zlb steer run inc
-
-incremental position로 run
-
-finish
-
-로시 다 종료
+# **ZL_B00(KINCO MOTOR&DRIVER) 시리즈 구동모듈 CANOPEN 프로토콜 제어 시스템**
+### 주요 파일 구조
+|파일명|설명|
+|---|---|
+|main.cpp|ROS 초기화 및 CLI 명령 루프 처리|
+|ZL_B.cpp|주행 및 조향 모터 제어를 포함한 상위 로직 관리|
+|ZL_B_traction.cpp|주행 모터 제어 명령 처리|
+|ZL_B_steer.cpp|조향 모터 제어 명령 처리|
+|canopen.cpp|CANOPEN 프로토콜 메세지 송수신 처리|
+### ROS 토픽
+|토픽|타입|설명|
+|---|---|---|
+|/can0/rx|can_msgs/Frame|수신된 CAN 프레임|
+|/can0/tx|can_msgs/Frame|송신된 CAN 프레임|
+|/pdo/tx|ZL_B00/pdo_tx_msgs|/can0/rx에서 파싱된 메세지|
+### 명령어 목록
+|명령어|기능|
+|---|---|
+|zlb stop|모든 모터 정지|
+|zlb reset|모든 모터 리셋|
+|zlb traction stop|주행 모터 정지|
+|zlb traction velmode|주행 모터를 속도 제어 모드로 설정|
+|zlb traction set rpm=100|주행 모터 속도 설정|
+|zlb traction run|설정된 속도로 주행 모터 구동|
+|zlb steer stop|조향 모터 정지|
+|zlb steer posmode|조향 모터를 속도 제어 모드로 설정|
+|zlb steer origin|조향 모터를 원점 위치로 구동|
+|zlb steer set rpm=100|조향 모터 속도 설정|
+|zlb steer set pos=100|조향 모터 타겟 위치 설정|
+|zlb steer set rpm=100 pos=100|조향 모터 속도 및 타겟 위치 설정|
+|zlb steer run abs|조향 모터 타겟 위치를 절대위치로 구동|
+|zlb steer run inc|조향 모터 타겟 위치를 상대위치로 구동|
