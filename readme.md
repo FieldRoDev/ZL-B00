@@ -18,10 +18,10 @@
 |---|---|
 |zlb stop|모든 모터 정지|
 |zlb reset|모든 모터 리셋|
-|zlb traction stop|주행 모터 정지|
-|zlb traction velmode|주행 모터를 속도 제어 모드로 설정|
-|zlb traction set rpm=100|주행 모터 속도 설정|
-|zlb traction run|설정된 속도로 주행 모터 구동|
+|zlb traction |stop|주행 모터 정지|
+|zlb traction |velmode|주행 모터를 속도 제어 모드로 설정|
+|zlb traction |set rpm=100|주행 모터 속도 설정|
+|zlb traction |run|설정된 속도로 주행 모터 구동|
 |zlb steer stop|조향 모터 정지|
 |zlb steer posmode|조향 모터를 속도 제어 모드로 설정|
 |zlb steer origin|조향 모터를 원점 위치로 구동|
