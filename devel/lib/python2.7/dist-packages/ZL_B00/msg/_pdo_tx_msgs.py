@@ -8,15 +8,13 @@ import struct
 
 
 class pdo_tx_msgs(genpy.Message):
-  _md5sum = "4311f381460c7d703b7fe50387d84cb7"
+  _md5sum = "e9771f6fc35a81e831d4a03276869531"
   _type = "ZL_B00/pdo_tx_msgs"
   _has_header = False  # flag to mark the presence of a Header object
-  _full_text = """int32 traction_position
-int32 traction_velocity
-int32 steer_position
-int32 steer_velocity"""
-  __slots__ = ['traction_position','traction_velocity','steer_position','steer_velocity']
-  _slot_types = ['int32','int32','int32','int32']
+  _full_text = """uint32 id
+uint8[4] data"""
+  __slots__ = ['id','data']
+  _slot_types = ['uint32','uint8[4]']
 
   def __init__(self, *args, **kwds):
     """
@@ -26,7 +24,7 @@ int32 steer_velocity"""
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       traction_position,traction_velocity,steer_position,steer_velocity
+       id,data
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -35,19 +33,13 @@ int32 steer_velocity"""
     if args or kwds:
       super(pdo_tx_msgs, self).__init__(*args, **kwds)
       # message fields cannot be None, assign default values for those that are
-      if self.traction_position is None:
-        self.traction_position = 0
-      if self.traction_velocity is None:
-        self.traction_velocity = 0
-      if self.steer_position is None:
-        self.steer_position = 0
-      if self.steer_velocity is None:
-        self.steer_velocity = 0
+      if self.id is None:
+        self.id = 0
+      if self.data is None:
+        self.data = b'\0'*4
     else:
-      self.traction_position = 0
-      self.traction_velocity = 0
-      self.steer_position = 0
-      self.steer_velocity = 0
+      self.id = 0
+      self.data = b'\0'*4
 
   def _get_types(self):
     """
@@ -61,8 +53,14 @@ int32 steer_velocity"""
     :param buff: buffer, ``StringIO``
     """
     try:
-      _x = self
-      buff.write(_get_struct_4i().pack(_x.traction_position, _x.traction_velocity, _x.steer_position, _x.steer_velocity))
+      _x = self.id
+      buff.write(_get_struct_I().pack(_x))
+      _x = self.data
+      # - if encoded as a list instead, serialize as bytes instead of string
+      if type(_x) in [list, tuple]:
+        buff.write(_get_struct_4B().pack(*_x))
+      else:
+        buff.write(_get_struct_4s().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -75,10 +73,12 @@ int32 steer_velocity"""
       codecs.lookup_error("rosmsg").msg_type = self._type
     try:
       end = 0
-      _x = self
       start = end
-      end += 16
-      (_x.traction_position, _x.traction_velocity, _x.steer_position, _x.steer_velocity,) = _get_struct_4i().unpack(str[start:end])
+      end += 4
+      (self.id,) = _get_struct_I().unpack(str[start:end])
+      start = end
+      end += 4
+      self.data = str[start:end]
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -91,8 +91,14 @@ int32 steer_velocity"""
     :param numpy: numpy python module
     """
     try:
-      _x = self
-      buff.write(_get_struct_4i().pack(_x.traction_position, _x.traction_velocity, _x.steer_position, _x.steer_velocity))
+      _x = self.id
+      buff.write(_get_struct_I().pack(_x))
+      _x = self.data
+      # - if encoded as a list instead, serialize as bytes instead of string
+      if type(_x) in [list, tuple]:
+        buff.write(_get_struct_4B().pack(*_x))
+      else:
+        buff.write(_get_struct_4s().pack(_x))
     except struct.error as se: self._check_types(struct.error("%s: '%s' when writing '%s'" % (type(se), str(se), str(locals().get('_x', self)))))
     except TypeError as te: self._check_types(ValueError("%s: '%s' when writing '%s'" % (type(te), str(te), str(locals().get('_x', self)))))
 
@@ -106,10 +112,12 @@ int32 steer_velocity"""
       codecs.lookup_error("rosmsg").msg_type = self._type
     try:
       end = 0
-      _x = self
       start = end
-      end += 16
-      (_x.traction_position, _x.traction_velocity, _x.steer_position, _x.steer_velocity,) = _get_struct_4i().unpack(str[start:end])
+      end += 4
+      (self.id,) = _get_struct_I().unpack(str[start:end])
+      start = end
+      end += 4
+      self.data = str[start:end]
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e)  # most likely buffer underfill
@@ -118,9 +126,15 @@ _struct_I = genpy.struct_I
 def _get_struct_I():
     global _struct_I
     return _struct_I
-_struct_4i = None
-def _get_struct_4i():
-    global _struct_4i
-    if _struct_4i is None:
-        _struct_4i = struct.Struct("<4i")
-    return _struct_4i
+_struct_4B = None
+def _get_struct_4B():
+    global _struct_4B
+    if _struct_4B is None:
+        _struct_4B = struct.Struct("<4B")
+    return _struct_4B
+_struct_4s = None
+def _get_struct_4s():
+    global _struct_4s
+    if _struct_4s is None:
+        _struct_4s = struct.Struct("<4s")
+    return _struct_4s

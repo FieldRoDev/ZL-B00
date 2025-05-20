@@ -18,49 +18,35 @@ class pdo_tx_msgs {
   constructor(initObj={}) {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
-      this.traction_position = null;
-      this.traction_velocity = null;
-      this.steer_position = null;
-      this.steer_velocity = null;
+      this.id = null;
+      this.data = null;
     }
     else {
-      if (initObj.hasOwnProperty('traction_position')) {
-        this.traction_position = initObj.traction_position
+      if (initObj.hasOwnProperty('id')) {
+        this.id = initObj.id
       }
       else {
-        this.traction_position = 0;
+        this.id = 0;
       }
-      if (initObj.hasOwnProperty('traction_velocity')) {
-        this.traction_velocity = initObj.traction_velocity
-      }
-      else {
-        this.traction_velocity = 0;
-      }
-      if (initObj.hasOwnProperty('steer_position')) {
-        this.steer_position = initObj.steer_position
+      if (initObj.hasOwnProperty('data')) {
+        this.data = initObj.data
       }
       else {
-        this.steer_position = 0;
-      }
-      if (initObj.hasOwnProperty('steer_velocity')) {
-        this.steer_velocity = initObj.steer_velocity
-      }
-      else {
-        this.steer_velocity = 0;
+        this.data = new Array(4).fill(0);
       }
     }
   }
 
   static serialize(obj, buffer, bufferOffset) {
     // Serializes a message object of type pdo_tx_msgs
-    // Serialize message field [traction_position]
-    bufferOffset = _serializer.int32(obj.traction_position, buffer, bufferOffset);
-    // Serialize message field [traction_velocity]
-    bufferOffset = _serializer.int32(obj.traction_velocity, buffer, bufferOffset);
-    // Serialize message field [steer_position]
-    bufferOffset = _serializer.int32(obj.steer_position, buffer, bufferOffset);
-    // Serialize message field [steer_velocity]
-    bufferOffset = _serializer.int32(obj.steer_velocity, buffer, bufferOffset);
+    // Serialize message field [id]
+    bufferOffset = _serializer.uint32(obj.id, buffer, bufferOffset);
+    // Check that the constant length array field [data] has the right length
+    if (obj.data.length !== 4) {
+      throw new Error('Unable to serialize array field data - length must be 4')
+    }
+    // Serialize message field [data]
+    bufferOffset = _arraySerializer.uint8(obj.data, buffer, bufferOffset, 4);
     return bufferOffset;
   }
 
@@ -68,19 +54,15 @@ class pdo_tx_msgs {
     //deserializes a message object of type pdo_tx_msgs
     let len;
     let data = new pdo_tx_msgs(null);
-    // Deserialize message field [traction_position]
-    data.traction_position = _deserializer.int32(buffer, bufferOffset);
-    // Deserialize message field [traction_velocity]
-    data.traction_velocity = _deserializer.int32(buffer, bufferOffset);
-    // Deserialize message field [steer_position]
-    data.steer_position = _deserializer.int32(buffer, bufferOffset);
-    // Deserialize message field [steer_velocity]
-    data.steer_velocity = _deserializer.int32(buffer, bufferOffset);
+    // Deserialize message field [id]
+    data.id = _deserializer.uint32(buffer, bufferOffset);
+    // Deserialize message field [data]
+    data.data = _arrayDeserializer.uint8(buffer, bufferOffset, 4)
     return data;
   }
 
   static getMessageSize(object) {
-    return 16;
+    return 8;
   }
 
   static datatype() {
@@ -90,16 +72,14 @@ class pdo_tx_msgs {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '4311f381460c7d703b7fe50387d84cb7';
+    return 'e9771f6fc35a81e831d4a03276869531';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
-    int32 traction_position
-    int32 traction_velocity
-    int32 steer_position
-    int32 steer_velocity
+    uint32 id
+    uint8[4] data
     `;
   }
 
@@ -109,32 +89,18 @@ class pdo_tx_msgs {
       msg = {};
     }
     const resolved = new pdo_tx_msgs(null);
-    if (msg.traction_position !== undefined) {
-      resolved.traction_position = msg.traction_position;
+    if (msg.id !== undefined) {
+      resolved.id = msg.id;
     }
     else {
-      resolved.traction_position = 0
+      resolved.id = 0
     }
 
-    if (msg.traction_velocity !== undefined) {
-      resolved.traction_velocity = msg.traction_velocity;
+    if (msg.data !== undefined) {
+      resolved.data = msg.data;
     }
     else {
-      resolved.traction_velocity = 0
-    }
-
-    if (msg.steer_position !== undefined) {
-      resolved.steer_position = msg.steer_position;
-    }
-    else {
-      resolved.steer_position = 0
-    }
-
-    if (msg.steer_velocity !== undefined) {
-      resolved.steer_velocity = msg.steer_velocity;
-    }
-    else {
-      resolved.steer_velocity = 0
+      resolved.data = new Array(4).fill(0)
     }
 
     return resolved;

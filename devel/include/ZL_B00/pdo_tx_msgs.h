@@ -24,32 +24,24 @@ struct pdo_tx_msgs_
   typedef pdo_tx_msgs_<ContainerAllocator> Type;
 
   pdo_tx_msgs_()
-    : traction_position(0)
-    , traction_velocity(0)
-    , steer_position(0)
-    , steer_velocity(0)  {
-    }
+    : id(0)
+    , data()  {
+      data.assign(0);
+  }
   pdo_tx_msgs_(const ContainerAllocator& _alloc)
-    : traction_position(0)
-    , traction_velocity(0)
-    , steer_position(0)
-    , steer_velocity(0)  {
+    : id(0)
+    , data()  {
   (void)_alloc;
-    }
+      data.assign(0);
+  }
 
 
 
-   typedef int32_t _traction_position_type;
-  _traction_position_type traction_position;
+   typedef uint32_t _id_type;
+  _id_type id;
 
-   typedef int32_t _traction_velocity_type;
-  _traction_velocity_type traction_velocity;
-
-   typedef int32_t _steer_position_type;
-  _steer_position_type steer_position;
-
-   typedef int32_t _steer_velocity_type;
-  _steer_velocity_type steer_velocity;
+   typedef boost::array<uint8_t, 4>  _data_type;
+  _data_type data;
 
 
 
@@ -80,10 +72,8 @@ return s;
 template<typename ContainerAllocator1, typename ContainerAllocator2>
 bool operator==(const ::ZL_B00::pdo_tx_msgs_<ContainerAllocator1> & lhs, const ::ZL_B00::pdo_tx_msgs_<ContainerAllocator2> & rhs)
 {
-  return lhs.traction_position == rhs.traction_position &&
-    lhs.traction_velocity == rhs.traction_velocity &&
-    lhs.steer_position == rhs.steer_position &&
-    lhs.steer_velocity == rhs.steer_velocity;
+  return lhs.id == rhs.id &&
+    lhs.data == rhs.data;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -140,12 +130,12 @@ struct MD5Sum< ::ZL_B00::pdo_tx_msgs_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "4311f381460c7d703b7fe50387d84cb7";
+    return "e9771f6fc35a81e831d4a03276869531";
   }
 
   static const char* value(const ::ZL_B00::pdo_tx_msgs_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x4311f381460c7d70ULL;
-  static const uint64_t static_value2 = 0x3b7fe50387d84cb7ULL;
+  static const uint64_t static_value1 = 0xe9771f6fc35a81e8ULL;
+  static const uint64_t static_value2 = 0x31d4a03276869531ULL;
 };
 
 template<class ContainerAllocator>
@@ -164,10 +154,8 @@ struct Definition< ::ZL_B00::pdo_tx_msgs_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "int32 traction_position\n"
-"int32 traction_velocity\n"
-"int32 steer_position\n"
-"int32 steer_velocity\n"
+    return "uint32 id\n"
+"uint8[4] data\n"
 ;
   }
 
@@ -186,10 +174,8 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.traction_position);
-      stream.next(m.traction_velocity);
-      stream.next(m.steer_position);
-      stream.next(m.steer_velocity);
+      stream.next(m.id);
+      stream.next(m.data);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -208,14 +194,14 @@ struct Printer< ::ZL_B00::pdo_tx_msgs_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::ZL_B00::pdo_tx_msgs_<ContainerAllocator>& v)
   {
-    s << indent << "traction_position: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.traction_position);
-    s << indent << "traction_velocity: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.traction_velocity);
-    s << indent << "steer_position: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.steer_position);
-    s << indent << "steer_velocity: ";
-    Printer<int32_t>::stream(s, indent + "  ", v.steer_velocity);
+    s << indent << "id: ";
+    Printer<uint32_t>::stream(s, indent + "  ", v.id);
+    s << indent << "data[]" << std::endl;
+    for (size_t i = 0; i < v.data.size(); ++i)
+    {
+      s << indent << "  data[" << i << "]: ";
+      Printer<uint8_t>::stream(s, indent + "  ", v.data[i]);
+    }
   }
 };
 

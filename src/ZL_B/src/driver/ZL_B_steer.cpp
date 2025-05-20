@@ -5,6 +5,9 @@
 ZL_B_steer::ZL_B_steer(SteerCallback steer_callback, std::string file_name)
 {
   _steer_callback_function = std::move(steer_callback);
+  _nh                      = new ros::NodeHandle;
+  _spinner                 = new ros::AsyncSpinner(5);
+  _spinner->start();
   load_option(file_name);
   steer_init();
 }
@@ -12,6 +15,8 @@ ZL_B_steer::ZL_B_steer(SteerCallback steer_callback, std::string file_name)
 ZL_B_steer::~ZL_B_steer()
 {
   stop();
+  safe_delete(_spinner);
+  safe_delete(_nh);
 }
 
 void ZL_B_steer::steer_init()
@@ -19,6 +24,7 @@ void ZL_B_steer::steer_init()
   stop();
   set_din();
   set_position_mode();
+  _get_velocity_position = _nh->subscribe<ZL_B00::pdo_tx_msgs>("pdo/tx", 100, &ZL_B_steer::get_velocity_position, this);
 }
 
 void ZL_B_steer::quick_stop()
@@ -50,6 +56,7 @@ void ZL_B_steer::set_position_mode()
 
 void ZL_B_steer::set_position(int32_t position)
 {
+  _set_position = position;
   _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_COMMAND_INDEX, 0x00, position);
 }
 
@@ -65,30 +72,47 @@ void ZL_B_steer::set_radian(double radian)
 
 void ZL_B_steer::set_position_speed(int32_t rpm)
 {
+  _set_velocity          = rpm;
   int32_t internal_speed = rpm_to_internal_velocity(rpm);
   _steer_callback_function(COMMAND_WORD::QUAD_DATA, CANOPEN_OD::POSITION_SPEED_COMMAND_INDEX, 0x00, static_cast<uint32_t>(internal_speed));
 }
 
 void ZL_B_steer::run_absolute_position()
 {
-  _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET1);
-  _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET2);
+  if(_positive_limit < _set_position)
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "Positive limit over.", "positive limit : " + std::to_string(_positive_limit));
+    return;
+  }
+  else if(_negative_limit > _set_position)
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "Negative limit over.", "negative limit : " + std::to_string(_negative_limit));
+    return;
+  }
+  else
+  {
+    _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET1);
+    _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::ABSOLUTE_POSITION_RUN_SET2);
+  }
 }
 
 void ZL_B_steer::run_incremental_position()
 {
-  _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET1);
-  _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET2);
-}
-
-void ZL_B_steer::get_position()
-{
-  _steer_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::POSITION_FEEDBACK_INDEX, 0x00, 0x00);
-}
-
-void ZL_B_steer::get_velocity()
-{
-  _steer_callback_function(COMMAND_WORD::READ_DATA, CANOPEN_OD::VELOCITY_FEEDBACK_INDEX, 0x00, 0x00);
+  if(_positive_limit < (_current_position + _set_position))
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "Positive limit over.", "positive limit : " + std::to_string(_positive_limit));
+    return;
+  }
+  else if(_negative_limit > (_current_position +_set_position))
+  {
+    LOGGER->push_log_format("ERROR", "PROC", "Negative limit over.", "negative limit : " + std::to_string(_negative_limit));
+    return;
+  }
+  else
+  {
+    _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET1);
+    _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::CONTROL_WORD_INDEX, 0x00, CANOPEN_OD::CONTROL_WORD_VALUE::INCREMENT_POSITION_RUN_SET2);
+  }
 }
 
 void ZL_B_steer::set_din()
@@ -96,6 +120,36 @@ void ZL_B_steer::set_din()
   _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::DIN_SETTING_INDEX, CANOPEN_OD::DIN_SETTING_SUB_INDEX::DIN1_FUNCTION, CANOPEN_OD::LIMIT_MODE_VALUE::POSITIVE);
   _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::DIN_SETTING_INDEX, CANOPEN_OD::DIN_SETTING_SUB_INDEX::DIN2_FUNCTION, CANOPEN_OD::LIMIT_MODE_VALUE::NONE);
   _steer_callback_function(COMMAND_WORD::DOUBLE_DATA, CANOPEN_OD::DIN_SETTING_INDEX, CANOPEN_OD::DIN_SETTING_SUB_INDEX::DIN3_FUNCTION, CANOPEN_OD::LIMIT_MODE_VALUE::NEGATIVE);
+}
+
+void ZL_B_steer::get_velocity_position(ZL_B00::pdo_tx_msgs msg)
+{
+  switch(msg.id)
+  {
+    case 0x182:
+    {
+      int32_t value = static_cast<int32_t>(
+                    msg.data[0] |
+                    (msg.data[1] << 8) |
+                    (msg.data[2] << 16) |
+                    (msg.data[3] << 24));
+      _current_position = value;
+      break;
+    }
+
+    case 0x282:
+    {
+      int32_t value = static_cast<int32_t>(
+                    msg.data[0] |
+                    (msg.data[1] << 8) |
+                    (msg.data[2] << 16) |
+                    (msg.data[3] << 24));
+      _current_velocity = internal_velocity_to_rpm(value);
+      break;
+    }
+
+    default: return;
+  }
 }
 
 void ZL_B_steer::load_option(std::string file_name)

@@ -14,13 +14,18 @@ public:
   void set_velocity_mode();
   void set_velocity(int32_t rpm);
   void run_velocity();
-  void get_position();
-  void get_velocity();
-
 
 protected:
   void set_din();
-  void    traction_init();
+  void traction_init();
+  void get_velocity_position(ZL_B00::pdo_tx_msgs msg);
 
-  TractionCallback _traction_callback_function;
+  int32_t _current_position;
+  int32_t _current_velocity;
+  int32_t _set_velocity;
+
+  ros::AsyncSpinner* _spinner;
+  ros::NodeHandle*   _nh;
+  ros::Subscriber    _get_velocity_position;
+  TractionCallback   _traction_callback_function;
 };
