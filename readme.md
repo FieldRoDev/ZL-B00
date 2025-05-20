@@ -18,15 +18,22 @@
 |---|---|
 |zlb stop|모든 모터 정지|
 |zlb reset|모든 모터 리셋|
-|zlb traction |stop|주행 모터 정지|
-|zlb traction |velmode|주행 모터를 속도 제어 모드로 설정|
-|zlb traction |set rpm=100|주행 모터 속도 설정|
-|zlb traction |run|설정된 속도로 주행 모터 구동|
+|zlb traction stop|주행 모터 정지|
+|zlb traction posmode|주행 모터를 위치 제어 모드로 설정|
+|zlb traction velmode|주행 모터를 속도 제어 모드로 설정|
+|zlb traction set rpm=100|주행 모터 속도 설정|
+|zlb traction set pos=100|주행 모터 타겟 위치 설정|
+|zlb traction set rpm=100 pos=100|주행 모터 속도 및 타겟 위치 설정|
+|zlb traction run vel|설정된 속도로 주행 모터 구동|
+|zlb traction run abs|설정된 타켓 절대 위치로 주행 모터 구동|
+|zlb traction run inc|설정된 타켓 상대 위치로 주행 모터 구동|
 |zlb steer stop|조향 모터 정지|
-|zlb steer posmode|조향 모터를 속도 제어 모드로 설정|
+|zlb steer posmode|조향 모터를 위치 제어 모드로 설정|
+|zlb steer velmode|조향 모터를 속도 제어 모드로 설정|
 |zlb steer origin|조향 모터를 원점 위치로 구동|
 |zlb steer set rpm=100|조향 모터 속도 설정|
 |zlb steer set pos=100|조향 모터 타겟 위치 설정|
 |zlb steer set rpm=100 pos=100|조향 모터 속도 및 타겟 위치 설정|
-|zlb steer run abs|조향 모터 타겟 위치를 절대위치로 구동|
-|zlb steer run inc|조향 모터 타겟 위치를 상대위치로 구동|
+|zlb steer run vel|설정된 속도로 조향 모터 구동|
+|zlb steer run abs|설정된 타켓 절대 위치로 조향 모터 구동|
+|zlb steer run inc|설정된 타켓 상대 위치로 조향 모터 구동|
